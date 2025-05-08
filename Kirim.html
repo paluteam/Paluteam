@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Kirim Foto Kamu</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      background-color: #f2f2f2;
+      padding: 30px;
+      text-align: center;
+    }
+
+    h1 {
+      color: #333;
+    }
+
+    input, textarea {
+      display: block;
+      margin: 10px auto;
+      padding: 10px;
+      width: 80%;
+      max-width: 400px;
+    }
+
+    button {
+      padding: 10px 20px;
+      background-color: #007bff;
+      border: none;
+      color: white;
+      cursor: pointer;
+      font-size: 16px;
+      border-radius: 5px;
+    }
+
+    #status {
+      margin-top: 20px;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Kirim Foto Kamu</h1>
+
+  <form id="contact-form">
+    <input type="text" id="name" placeholder="Nama kamu" required>
+    <input type="email" id="email" placeholder="Email kamu" required>
+    <textarea id="message" placeholder="Pesan kamu" required></textarea>
+    <input type="file" id="fileInput" accept="image/*" required>
+    <button type="submit">Kirim</button>
+  </form>
+
+  <div id="status"></div>
+  
+  <script>
+    document.getElementById('contact-form').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const status = document.getElementById('status');
+      const name = document.getElementById('name').value;
+      const email = document.getElementById('email').value;
+      const message = document.getElementById('message').value;
+      const fileInput = document.getElementById('fileInput');
+      const file = fileInput.files[0];
+
+      if (!file) {
+        status.innerText = 'Silakan pilih foto terlebih dahulu.';
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.onloadend = function () {
+        const base64Image = reader.result.split(',')[1];
+        const formData = new FormData();
+        formData.append('key', 'eab55e766356b3cb9fa8c31a36bd122f'); // API key imgbb
+        formData.append('image', base64Image);
+
+        status.innerText = 'Mengupload gambar...';
+
+        fetch('https://api.imgbb.com/1/upload', {
+          method: 'POST',
+          body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+          if (data.success) {
+            const imageUrl = data.data.url;
+            const telegramUsername = "6289528089119"; // ganti dengan nomor/username
+            const text = `Halo Kelvin, saya ${name} (${email}) ingin mengirimkan pesan:\n\n${message}\n\nLink foto: ${imageUrl}`;
+            const telegramUrl = `https://t.me/share/url?url=${encodeURIComponent(imageUrl)}&text=${encodeURIComponent(text)}`;
+            window.open(telegramUrl, '_blank');
+            status.innerText = 'Pesan siap dikirim lewat Telegram!';
+            document.getElementById('contact-form').reset();
+          } else {
+            status.innerText = 'Gagal mengupload gambar.';
+          }
+        })
+        .catch(error => {
+          status.innerText = 'Terjadi kesalahan: ' + error;
+        });
+      };
+
+      reader.readAsDataURL(file);
+    });
+  </script>
+
+</body>
+</html>

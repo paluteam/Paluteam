@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', sans-serif;
+      min-height: 100vh;
+      background-color: white;
+      position: relative;
+      padding-bottom: 180px;
+    }
+
+    /* Loading Screen */
+    #loading {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: linear-gradient(135deg, #001f3f, #004080);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+      transition: opacity 0.6s ease;
+    }
+
+    #loading.hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .loader {
+      border: 28px solid rgba(255, 255, 255, 0.5);
+      border-top: 28px solid rgba(230, 230, 230, 1);
+      border-radius: 50%;
+      width: 200px;
+      height: 200px;
+      animation: spin 2s linear infinite;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    /* Judul */
+    .judul {
+      text-align: center;
+      margin: 150px 0 10px;
+    }
+
+    .judul h1 {
+      font-size: 10vw;
+      color: #003366;
+      font-weight: bold;
+      margin: 0;
+      padding: 10px;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+      letter-spacing: 1px;
+    }
+
+    /* Warning Box */
+    .warning-box {
+      background-color: rgba(255, 220, 220, 0.9);
+      border: 2px solid #ff5e5e;
+      border-radius: 15px;
+      padding: 88px;
+      color: #4b0000;
+      margin: 400px auto;
+      max-width: 1000px;
+      box-shadow: 0 0 10px rgba(255, 94, 94, 0.5);
+    }
+
+    .warning-box h2 {
+      margin-top: 1000;
+      font-size: 5rem;
+      color: #c40000;
+      text-align: center;
+    }
+
+    .warning-box p {
+      font-size: 3.5rem;
+      margin: 0px 0;
+      line-height: 1.6;
+    }
+
+    .warning-box strong {
+      color: #b20000;
+    }
+
+    /* Slider */
+    .slider {
+      position: relative;
+      width: 100%;
+      max-width: 1000px;
+      margin: 200px auto 458px;
+      overflow: hidden;
+      border-radius: 20px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+      opacity: 0;
+      transform: translateY(30px);
+      transition: opacity 1s ease, transform 1s ease;
+    }
+
+    .slider.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .slides {
+      display: flex;
+      transition: transform 0.5s ease-in-out;
+    }
+
+    .slide {
+      flex: 0 0 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .slider img {
+      width: 100%;
+      height: auto;
+      border-radius: 20px;
+      display: block;
+    }
+
+    .btn {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      background-color: rgba(0,0,0,0.5);
+      color: white;
+      border: none;
+      padding: 12px 20px;
+      font-size: 28px;
+      cursor: pointer;
+      z-index: 100;
+      border-radius: 8px;
+    }
+
+    .prev { left: 10px; }
+    .next { right: 10px; }
+
+    /* Tombol Menu */
+    .menu-button {
+      text-align: center;
+      margin: 100px 0;
+    }
+
+    .menu-button a {
+      display: block;
+      background-color: #0066cc;
+      color: white;
+      font-weight: bold;
+      font-size: 24vw;
+      padding: 24px 24px;
+      border-radius: 12px;
+      margin-left: 550px;
+      margin-right: 550px;
+      text-decoration: none;
+      width: 1000%;
+      max-width: 300px;
+      transition: background 0.3s;
+    }
+
+    .menu-button a:hover {
+      background-color: #004c99;
+    }
+
+    /* Kontak Admin */
+    .kontak-admin {
+  background-color: #003366;
+  text-align: center;
+  padding: 35px 10px;
+  position: relative;
+  margin-top: 100px;
+  width: 100%;
+}
+
+    .kontak-admin p {
+      color: white;
+      font-size: 88px;
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
+
+    .kontak-admin a {
+      display: inline-block;
+      background-color: #ffcc00;
+      color: #003366;
+      font-weight: bold;
+      font-size: 98px;
+      padding: 16px 32px;
+      border-radius: 12px;
+      text-decoration: none;
+    }
+
+    /* Responsive */
+    @media (min-width: 768px) {
+      .judul h1 {
+        font-size: 100px;
+      }
+
+      .menu-button a {
+        font-size: 28px;
+      }
+
+      .kontak-admin p {
+        font-size: 40px;
+      }
+
+      .kontak-admin a {
+        font-size: 68px;
+        padding: 20px 40px;
+      }
+    }
+    
+    .kontak-admin {
+  background-color: #003366;
+  text-align: center;
+  padding: 200px 58px;
+  position: absolute;
+  bottom: 1000000;
+  left: 1000000;
+  width: 100%;
+}
+
+    .kirim-foto {
+      margin-bottom: 68px;
+    }
+
+    .lihat-foto {
+      margin-top: 68px;
+    }
+  </style>
+</head>
+<body onload="startSlider(); hideLoading();">
+
+  <!-- Loading -->
+  <div id="loading">
+    <div class="loader"></div>
+  </div>
+
+  <!-- Judul -->
+  <div class="judul">
+    <h1>PENYIMPAN FOTO <br>BERSAMA</br></h1>
+  </div>
+
+  <!-- Slider -->
+  <div class="slider">
+    <div class="slides" id="slideContainer">
+      <div class="slide"><img src="3.png" alt="Foto 1"></div>
+      <div class="slide"><img src="1.png" alt="Foto 2"></div>
+    </div>
+    <button class="btn prev" onclick="prevSlide()">&#10094;</button>
+    <button class="btn next" onclick="nextSlide()">&#10095;</button>
+  </div>
+
+  <!-- Tombol -->
+  <div class="menu-button">
+    <div class="kirim-foto">
+      <a href="kirim.html">KIRIM FOTO</a>
+    </div>
+    <div class="lihat-foto">
+      <a href="galeri.html">LIHAT FOTO</a>
+    </div>
+  </div>
+  
+  <!-- Peringatan -->
+<div class="warning-box">
+  <h2>Peringatan!</h2>
+  <p>Website ini adalah tempat menyimpan <strong>foto bersama</strong> atau <strong>foto kenang-kenangan</strong>. Agar semua merasa nyaman, mohon ikuti peraturan berikut ini:</p>
+  <br><br><br><br>
+  <p><strong>1.Hanya boleh mengirim foto bersama.</strong> Foto pribadi (sendiri saja) <strong>tidak diperbolehkan</strong>. Simpan saja di galeri sahabat, ya.</p>
+    <br><br><br><br>
+  <p><strong>2.Foto pribadi yang dikirim tidak akan dimasukkan ke dalam menu "Lihat Foto".</strong></p>
+  <br><br><br><br>
+  <p><strong>3.Dilarang mengirim foto yang mempermalukan orang lain (foto aib)</strong>, kecuali sudah mendapat izin dari yang bersangkutan. Jika dilanggar, <strong>foto akan dihapus oleh tim pengelola</strong>.</p>
+  <br><br><br><br>
+  <p><strong>4.Jangan spam atau mengirim foto yang sama berulang kali.</strong> Kirim satu kali saja agar tidak mengganggu proses penyimpanan.</p>
+  <br><br><br><br>
+  <p><strong>5.Pastikan foto yang dikirim jelas dan tidak buram.</strong> Foto yang sangat gelap, buram, atau tidak bisa dikenali <strong>mungkin tidak akan ditampilkan</strong>.</p>
+  <br><br><br><br>
+  <p>Setiap foto yang dikirim akan diberi <strong>nomor otomatis</strong>, jadi sahabat tidak perlu menamai foto apa pun.</p>
+  <p>Mohon untuk <strong>mengikuti peraturan ini dengan santai tapi tetap bertanggung jawab</strong>, ya!</p>
+  <p><strong>Bersikaplah bijak</strong>, dan jadilah sahabat yang baik di website ini.</p>
+  <h2>Pujituan!</h2>
+</div>
+
+  <!-- Kontak Admin -->
+  <footer class="kontak-admin">
+    <p>Butuh bantuan?</p>
+    <a href="https://t.me/+6289528089119" target="_blank">Hubungi admin</a>
+  </footer>
+
+  <!-- Script -->
+  <script>
+    const slideContainer = document.getElementById("slideContainer");
+    let slides = slideContainer.children;
+    let currentIndex = 0;
+    let autoSlide;
+
+    const firstClone = slides[0].cloneNode(true);
+    slideContainer.appendChild(firstClone);
+    const totalSlides = slideContainer.children.length;
+
+    function showSlide(index) {
+      slideContainer.style.transition = 'transform 0.5s ease-in-out';
+      slideContainer.style.transform = `translateX(-${index * 100}%)`;
+    }
+
+    function nextSlide() {
+      currentIndex++;
+      showSlide(currentIndex);
+      if (currentIndex === totalSlides - 1) {
+        setTimeout(() => {
+          slideContainer.style.transition = 'none';
+          currentIndex = 0;
+          slideContainer.style.transform = `translateX(0%)`;
+          requestAnimationFrame(() => {
+            requestAnimationFrame(() => {
+              slideContainer.style.transition = 'transform 0.5s ease-in-out';
+            });
+          });
+        }, 500);
+      }
+    }
+
+    function prevSlide() {
+      currentIndex = (currentIndex - 1 + totalSlides) % totalSlides;
+      showSlide(currentIndex);
+    }
+
+    function startSlider() {
+      autoSlide = setInterval(nextSlide, 4000);
+    }
+
+    function hideLoading() {
+      setTimeout(() => {
+        document.getElementById("loading").classList.add("hidden");
+        document.querySelector(".slider").classList.add("show");
+      }, 2000);
+    }
+  </script>
+</body>
+</html>
